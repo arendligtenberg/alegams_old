@@ -1,9 +1,15 @@
 /**
-* Name: MyModel
-* Author: tong004
-* Description: Tutorial
-* Tags: Tag1, Tag2, TagN
+* 
+* Author: Arend, Hiêp
+* Description: first version of update ABM for the Alegams project
+* To be presented during the Vietnam workshop second half oktober 2016
+* August 2016
+* TBD 
+* adding initialisation routine - only after proper dataset
+* adding decision making behaviour according flow diagram
 */
+
+
 
 model Alegams_base
 
