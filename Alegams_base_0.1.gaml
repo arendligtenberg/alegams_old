@@ -40,11 +40,11 @@ global{
 
 	//create a farm on each plot with a shrimp farm
 		ask plot{
-			if self.production_system != 999{
+			if self.production_System != 999{
 					write " creating farmer";
 					create farm number:1 {
 						set farmPlot <- myself;
-						set name <- "Schrimpfarmer_"+farmPlot.plot_id;
+						set name <- "Schrimpfarmer_"+farmPlot.plot_Id;
 						set farmPlot.name <- "plot of: "+name;
 						location <- any_location_in(farmPlot);
 					}		
@@ -67,7 +67,7 @@ species plot{
 		float tot_Area;
 		string LU_Code;
 		string land_Use;
-		int species;
+		int specie;
 		int production_System update: self color_plots [];
 		rgb color <- #gray;
 		
@@ -140,7 +140,7 @@ species plot{
 		
 		//color the plot
 		action color_plots{
-			switch production_system{
+			switch production_System{
 				match INT {color <- #red;}
 				match IE {color <- #yellow;}
 				match IMS {color <- #green;}
