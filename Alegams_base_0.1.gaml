@@ -58,16 +58,17 @@ global{
 
 //Species section
 species plot{
-		int plot_id;
-		int forest;
-		int agrArea;
+		int plot_Id;
+		//int forest;
+		//int agrArea;
 		float area_INT;
 		float area_IE;
 		float area_IMS;
 		float tot_Area;
 		string LU_Code;
 		string land_Use;
-		int production_system update: self color_plots [];
+		int species;
+		int production_System update: self color_plots [];
 		rgb color <- #gray;
 		
 		
@@ -125,13 +126,13 @@ species plot{
 			type_string <- INT_true + IE_true + IMS_true;
 			
 			switch type_string{
-				match 1 {set production_system <- INT;}
-				match 10 {set production_system <- IE;}
-				match 100 {set production_system <- IMS;}
-				match 11 {set production_system <- INT_IE;}
-				match 101 {set production_system <- INT_IMS;}
-				match 110 {set production_system <- IE_IMS;}	
-				default{set production_system <- unKnown;}							
+				match 1 {set production_System <- INT;}
+				match 10 {set production_System <- IE;}
+				match 100 {set production_System <- IMS;}
+				match 11 {set production_System <- INT_IE;}
+				match 101 {set production_System <- INT_IMS;}
+				match 110 {set production_System <- IE_IMS;}	
+				default{set production_System <- unKnown;}							
 			}
 			
 		}//end determine_prod_system

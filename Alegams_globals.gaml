@@ -30,6 +30,18 @@ model Alegamsglobals
  	float INT_size <- 5000;
  	float IE_size <- 10000;
  	
+ 	//Risk for disease for the differen production systems
+ 	float farmPlotFailureRate_IE <- 0.1;
+ 	float farmPlotFailureRate_INT <- 0.2;
+ 	float farmPlotFailureRate_IMS <- 0.05;
+ 		
+ 	//Times to harvest
+ 	int time_Harvest_INT_mono <- 4;
+	int time_Harvest_INT_vana <- 3;
+	int time_Harvest_IE <- 6;
+	int time_Harvest_IMS <- 1; //continuous harvesting
+ 		
+ 	
  		
  	file plot_file <- file ('../includes/LongVinhCadCorrect.shp');
  	}
