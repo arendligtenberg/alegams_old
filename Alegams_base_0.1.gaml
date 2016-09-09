@@ -156,13 +156,20 @@ species plot{
 }			
 
 species farm{
+		//declaration of the farm characteristics
 		plot farmPlot;
 		int plotId;
-		int hh_size;
-		int bank_account;
-		int bank_loan;
-		int commercial_loan;
+		int nr_Plots;
+		int hh_Size;
+		int hh_bank_account;
+		int bank_Loan;
+		int extra_Loan;
+		int max_Loan;
 		int age;
+		float interest_Bank;
+		float interest_Commercial;
+		int nr_Labour;
+		int prob_Shift;
 
 		init{
 			
