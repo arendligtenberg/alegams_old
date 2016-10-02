@@ -30,22 +30,6 @@ model Alegamsglobals
  	float INT_size <- 5000;
  	float IE_size <- 10000;
  	
- 	// investment cost
- 	
- 	int Investment_ie <- 75
- 	int Investment_int <- 250
- 	int Investment_ims <- 76
- 	
- 	// Maximun loan
- 	
- 	int Max_loan <- 150
- 	
- 	// cost crop 
- 	int Crop_cost_ie <- 17
- 	int Crop_cost_ims <- 3
- 	int Crop_cost_int <- 122
-
-
  		
  	file plot_file <- file ('../includes/LongVinhCadCorrect.shp');
  	}
