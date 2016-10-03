@@ -55,7 +55,6 @@ global{
 }//end global section
 
 
-
 //Species section
 species plot{
 		int plot_Id;
@@ -174,12 +173,17 @@ species farm{
 
 		init{
 			
-			
+			set hh_bank_account <- 100;
 		}
+		
+		
+		
+		
+		
 	aspect default {
 				draw square(25) color: rgb('white');
 		}
-}//farmer
+}//farm
 
 
 
