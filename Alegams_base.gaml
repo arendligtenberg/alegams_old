@@ -5,7 +5,6 @@
 * To be presented during the Vietnam workshop second half oktober 2016
 * August 2016
 * TBD 
-* adding initialisation routine - only after proper dataset
 * adding decision making behaviour according flow diagram
 */
 
@@ -14,37 +13,34 @@
 model Alegams_base
 
 
-/* Insert your model definition here */
-
-//default shapefile with plots
-
-
-
 import "./Alegams_globals.gaml"
 import "./Alegams_farm.gaml"
 import "./Alegams_plot.gaml"
+import "./Alegams_statistics.gaml"
 
 global{
+	
+	
 	
 	geometry shape <- envelope(plot_file);
 
 	init{
+	
 	// create plot though GIS file
+	
 		create plot from: plot_file with: 	
 		[
-			plot_id::int(read("OBJECTID")),
-			lU_Code::string(read("Lu_Code")),
-			forest::int(read("Forest2014")),
-			agrArea::int(read("AgrArea201")),
-			land_Use::string(read("LU_ModelDe")),
-			tot_Area::(float(read("Shape_Area")))/10000		
+		plot_Id::int(read("OBJECTID")),
+		tot_Area::(float(read("Shape_Area")))/10000,
+		LU_model::int(read("LU_model"))
+			
 		]{		}
 
 	//create a farm on each plot with a shrimp farm
 		ask plot{
 			
 			if self.production_System != 999{
-					write "Creating farmer";
+					//write "Creating farmer";
 					create farm number:1 {
 						set farmPlot <- myself;
 						set name <- "Schrimpfarmer_"+farmPlot.plot_Id;
@@ -54,18 +50,14 @@ global{
 				}
 		}
 
-	//a number of initialisation staps for the farm. Need to be done here since the routine for creating agents has been changed in 1.7
-	//can't be done in the init routine of the agent zelf;
-//	ask farm{
-//			write "Executing init for Farm";
-//						
-//
-//	}
 
 	}//end init
 	
-
-	
+	reflex output_Statistics{
+		do calculate_averag_bankaccount;
+		do calculate_tot_areas;
+		
+	}
 	
 } //end global section
 
@@ -76,7 +68,7 @@ global{
 	
 //experiment section 
 		
-experiment farms type: gui {
+experiment alegams type: gui {
 	parameter "Plot file" var: plot_file category: "GIS" ;
 
 	output{
@@ -84,6 +76,17 @@ experiment farms type: gui {
 			species plot aspect: base;
 			species farm aspect: default;
 		}
+	
+		display bank_Account {
+			chart "Average saldo " type: series background: rgb ('white') size: {1,0.5} position: {0,0}{
+		 	data "AVG Saldo" value: avg_BankAccount color: rgb ('red');
+			}
+		}
+		monitor "Average saldo" value: avg_BankAccount refresh:every(1);	
+		monitor "Total Area INT" value: tot_INT refresh:every(1);
+		monitor "Total Area IE" value: tot_IE refresh:every(1);
+		monitor "Total Area IMS" value: tot_IMS refresh:every(1);
+		
 	}
 }	
 

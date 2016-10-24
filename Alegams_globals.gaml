@@ -45,9 +45,9 @@ model Alegamsglobals
  	//float farmPlotFailureRate_INT <- 0.56.;
  	//float farmPlotFailureRate_IMS <- 0.47.;
 
- 	float farmPlotFailureRate_INT <- 0.0 parameter: "chance of disease for intensive" category: "Crop" ; //0.4;
- 	float farmPlotFailureRate_IE <- 0.0 parameter: "chance of disease for improved extensive" category: "Crop" ; //0.3;
- 	float farmPlotFailureRate_IMS <- 0.0 parameter: "chance of disease for integrated mangrove" category: "Crop" ; //0.1;
+ 	float farmPlotFailureRate_INT <- 0.43 parameter: "chance of disease for intensive" category: "Crop" ; //0.4;
+ 	float farmPlotFailureRate_IE <- 0.29 parameter: "chance of disease for improved extensive" category: "Crop" ; //0.3;
+ 	float farmPlotFailureRate_IMS <- 0.1 parameter: "chance of disease for integrated mangrove" category: "Crop" ; //0.1;
 
  	
  	//cost to seed new shrimp (mVnd/ha)
@@ -73,7 +73,6 @@ model Alegamsglobals
  
  
  
- 
 	//household related
 
 	// houshold expenses (Mvdn/person/month	
@@ -92,9 +91,10 @@ model Alegamsglobals
 	//float HH_loan_std_IMS <- 30.00;
 	
  	//basic pond size
- 	float INT_size <- 0.5 parameter: "basic size of an intensive pond (ha.)" category: "Farm" ;
- 	float IE_size <- 1.0 parameter: "basix size of an improved extensive pond)" category: "Farm" ;
- 
+ 	float min_INT_size <- 0.4 parameter: "min size of intensive ponds (ha.)" category: "Farm" ;
+	float max_INT_size <- 1.4 parameter: "max size of intensive ponds (ha.)" category: "Farm" ; 	
+ 	float min_IE_size <- 0.7 parameter: "min size of improved extensive ponds)" category: "Farm" ;
+    float max_IE_size <- 2.0 parameter: "max size of improved extensive ponds)" category: "Farm"; 
 	
 	float HH_2ndincome_avg_INT_mono <-229.00/12 parameter: "average sec. income intensive Monodon(mVnd/month)" category: "Farm" ;
 	float HH_2ndincome_stddev_INT_mono <- 50.00/12;
@@ -128,7 +128,6 @@ model Alegamsglobals
 	float shrimp_price_IMS <- 0.25 parameter: "shrimp price integrated mangrove (mVnd/kg)" category: "Market" ;
 	
 	
-	
- 	file plot_file <- file ('../includes/LongVinhCadCorrect.shp');
+ 	file plot_file <- file ('../includes/LongVinhProvinceCorrectFinal2.shp');
  	}
 
