@@ -17,9 +17,7 @@ species plot
 	float area_IE;
 	float area_IMS;
 	float tot_Area;
-	string LU_Code;
-	string land_Use;
-	int specie;
+	int LU_model;	
 	int production_System update: self color_plots [];
 	rgb color <- # gray;
 	int shrimp_Type;
@@ -29,61 +27,82 @@ species plot
 	float yield_IMS;
 	init
 	{
-		do seed_initial_distribution_of_production_system;
-		do determine_prod_system;
+		//do determine_initial_land_use;
+		//do determine_prod_system;
+		do determine_area_production_system;
 		do color_plots;
 	}
 
-	//Currently a very simple rule to create an initial distribution of production systems, need to be elaborated
-	action seed_initial_distribution_of_production_system
-	{
-		if land_Use = "Protection forest"
-		{
-			set area_IMS <- tot_Area;
-		}
 
-		if land_Use = "Production forest"
-		{
-			if flip(Prob_INT_IMS)
-			{
-				set area_INT <- INT_size;
-				set area_IMS <- tot_Area - area_INT;
-				if area_IMS < 0
-				{
-					set area_IMS <- 0.0;
+
+	
+	action determine_area_production_system{
+		switch LU_model{
+			match 1{
+				set area_INT <- rnd(min_INT_size,max_INT_size);
+				if area_INT > tot_Area{
+					area_INT <- tot_Area;
+				}	
+				set shrimp_Type <- rnd(1, 2);
+				set production_System <- INT;
+				
+			}
+			match 2{
+				set area_IE <- rnd(min_IE_size,max_IE_size);
+				if area_IE > tot_Area{
+					area_IE <- tot_Area;
 				}
-
-			} else if flip(Prob_IE_IMS)
-			{
-				set area_IE <- IE_size;
-				set area_IMS <- tot_Area - area_IE;
-				set shrimp_Type <- rnd(1, 2);
-			} else
-			{
+				set production_System <- IE;
+				
+			}
+			match 3{
 				set area_IMS <- tot_Area;
+				set production_System <- IMS;
+				
+			}
+			match 4 {
+				set area_INT <- rnd(min_INT_size,max_INT_size);
+				set area_IE <- rnd(min_IE_size,max_IE_size);
+				if (area_INT + area_IE) > tot_Area{
+					let d_area <- ((area_INT + area_IE) - tot_Area)/2;
+					set area_INT <-  area_INT - d_area;
+					set area_IE <- area_IE - d_area;
+				}
+				set shrimp_Type <- rnd(1, 2);
+				set production_System <- INT_IE;
+			}
+			match 5 {
+				set area_INT <- rnd(min_INT_size,max_INT_size);
+				if (area_INT * 2) < tot_Area{
+					set area_IMS <- tot_Area - area_INT;
+				}else{
+					set area_INT <- tot_Area/2;
+					set area_IMS <- tot_Area - area_INT;
+				}
+				set shrimp_Type <- rnd(1, 2);
+				set production_System <- INT_IMS;
+			}
+			match 6 {
+				set area_IE <- rnd(min_IE_size,max_IE_size);
+				if (area_IE * 2) < tot_Area{
+					set area_IE <- tot_Area - area_IE;
+				}else{
+					set area_IE <- tot_Area/2;
+					set area_IE <- tot_Area - area_IE;
+				}
+				set production_System <- IE_IMS;
+			}
+			default{
+				set production_System <- 999;
 			}
 
+			
+						
 		}
+			set production_System <- LU_model;		
 
-		if land_Use = "Shrimp"
-		{
-			if flip(Prob_INT_IE)
-			{
-				set area_INT <- INT_size;
-				set area_IE <- tot_Area - area_INT;
-				set shrimp_Type <- rnd(1, 2);
-			} else if flip(Prob_IE)
-			{
-				set area_IE <- tot_Area;
-			} else
-			{
-				set area_INT <- tot_Area; //todo: need to set max size for pure intensive farms.
-				set shrimp_Type <- rnd(1, 2);
-			}
+	}
 
-		}
-
-	} //end seed_initial_distribution_of_production_system
 
 	//this action determines the name of the production system 
 	action determine_prod_system

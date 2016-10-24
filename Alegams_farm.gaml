@@ -7,7 +7,7 @@
 model Alemans_farm
 
 import "./Alegams_globals.gaml"
-import "./Alegams_base_0.1.gaml"
+import "./Alegams_base.gaml"
 species farm
 {
 //declaration of the farm characteristics
@@ -46,7 +46,7 @@ species farm
 		set grow_Time_IE <- rnd(0, time_Harvest_IE);
 		set grow_Time_IMS <- rnd(0, time_Harvest_IMS);
 		set max_Loan <- rnd(25.0, 50.0);
-		set bank_Account <- rnd((-1 * max_Loan), (crop_cost * 3));
+		set bank_Account <- rnd((-2 * max_Loan), (2 * max_Loan));
 	}
 
 	reflex grow_Shrimp
@@ -69,6 +69,8 @@ species farm
 
 		//reset crop costs
 		set crop_cost <- 0.0;
+		
+		//start farming actions
 		do check_for_disease;
 		do check_for_harvest;
 		do calc_second_income;
@@ -115,20 +117,22 @@ species farm
 
 		// calculate total crop cost. If in this month new shrimps are seeded than the montly cost are added to the 
 		// seed costs (which is the case when harvest has occured) 
-		if (farmPlot.shrimp_Type = 1) or (farmPlot.shrimp_Type = 2)
-		{
-			write "---" + crop_cost;
+		//if (farmPlot.shrimp_Type = 1) or (farmPlot.shrimp_Type = 2)
+		//{
+			//write "---" + crop_cost;
 			set crop_cost <- crop_cost + int_cost + ie_cost + ims_cost;
-			write "int: " + int_cost;
-			write "ie: " + ie_cost;
-			write "ims: " + ims_cost;
-			write "cropcost: " + crop_cost;
-			write "=======================";
-		}
+			//write "int: " + int_cost;
+			//write "ie: " + ie_cost;
+			//write "ims: " + ims_cost;
+			//write "cropcost: " + crop_cost;
+			//write "=======================";
+		//}
 
 	}
 
+//========
 	action calc_second_income
+
 	{
 		float int_second <- 0.0;
 		float ie_second <- 0.0;
@@ -158,13 +162,22 @@ species farm
 		set second_Income <- int_second + ie_second + ims_second;
 	}
 
+
+
+//======
 	action check_for_harvest
 	{
 
+	//check disease
+	//write "checking disease";
+	//set disease_INT <- diseaseINT();
+	//set disease_IE <- diseaseIE();	
+	//set disease_IMS <- diseaseIMS();
 	//In case of disease
-	//IN
+	//INT
 		if farmPlot.area_INT > 0 and disease_INT
 		{
+			set disease_INT <- true;
 			if (farmPlot.shrimp_Type = 1)
 			{
 				if grow_Time_INT >= time_Harvest_fail_INT_mono
@@ -245,8 +258,7 @@ species farm
 				set farmPlot.yield_INT_vana <- farmPlot.yield_INT_vana + (crop_yield_INT_vana * farmPlot.area_INT);
 				set income_from_INT_vana <- income_from_INT_vana + farmPlot.yield_INT_vana * shrimp_price_INT_vana;
 				set grow_Time_INT <- 0;
-			}
-
+			}  
 		}
 
 		//IE
@@ -275,15 +287,30 @@ species farm
 
 		}
 
-		//todo: improve efficiency of code	
+		//TODO: improve efficiency of code	
 
 		//we need to seed new shrimp for the systems that were harvested
 		do seed_new_shrimp;
 	}
+//===	
+	bool diseaseINT{
+		write "flipper";
+		return flip(farmPlotFailureRate_INT);
+	}
+	
+	bool diseaseIE{
+		return flip(farmPlotFailureRate_IE);
+	}
+	
+	bool diseaseIMS{
+		return flip(farmPlotFailureRate_IMS);
+		
+	}
 
 	action check_for_disease
 	{
-	//todo: need to check probabilities in globals. Currently extreme high!	
+	//TODO: need to check probabilities in globals. Currently extreme high!	
+	//TODO currently probabilities are non-conditional: is this ok?
 		if flip(farmPlotFailureRate_INT)
 		{
 			disease_INT <- true;
@@ -316,6 +343,7 @@ species farm
 	{
 	//New shrimps are seed for systems for which the time is reset to 0. This is done after harvest.
 	//The cost for seed/initialisation are added to the crop costs of that month		
+	//TODO: Discuss the costs of seeding.
 	//INT
 		if (grow_Time_INT = 0) and (farmPlot.area_INT > 0)
 		{

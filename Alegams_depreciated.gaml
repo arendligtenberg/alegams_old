@@ -83,4 +83,57 @@ model Alegams_depreciated
 		}
 
 	}
+	
+	
+		//Currently a very simple rule to create an initial distribution of production systems, need to be elaborated
+	action seed_initial_distribution_of_production_system
+	{
+		if land_Use = "Protection forest"
+		{
+			set area_IMS <- tot_Area;
+		}
+
+		if land_Use = "Production forest"
+		{
+			if flip(Prob_INT_IMS)
+			{
+				set area_INT <- INT_size;
+				set area_IMS <- tot_Area - area_INT;
+				if area_IMS < 0
+				{
+					set area_IMS <- 0.0;
+				}
+
+			} else if flip(Prob_IE_IMS)
+			{
+				set area_IE <- IE_size;
+				set area_IMS <- tot_Area - area_IE;
+				set shrimp_Type <- rnd(1, 2);
+			} else
+			{
+				set area_IMS <- tot_Area;
+			}
+
+		}
+
+		if land_Use = "Shrimp"
+		{
+			if flip(Prob_INT_IE)
+			{
+				set area_INT <- INT_size;
+				set area_IE <- tot_Area - area_INT;
+				set shrimp_Type <- rnd(1, 2);
+			} else if flip(Prob_IE)
+			{
+				set area_IE <- tot_Area;
+			} else
+			{
+				set area_INT <- tot_Area; //todo: need to set max size for pure intensive farms.
+				set shrimp_Type <- rnd(1, 2);
+			}
+
+		}
+
+	} //end seed_initial_distribution_of_production_system
+	
 
