@@ -25,10 +25,13 @@ species farm
 	float interest_Commercial;
 	int nr_Labour;
 	int prob_Shift;
-	int grow_Time; //month
+	int time; //month
 	int grow_Time_INT; //month
 	int grow_Time_IE; //month
 	int grow_Time_IMS; //month
+	int cycle_INT;
+	int cycle_IE;
+	int cycle_IMS;
 	bool disease_INT;
 	bool disease_IE;
 	bool disease_IMS;
@@ -42,11 +45,17 @@ species farm
 	{
 		set hh_Size <- rnd(1, 5);
 		set age <- rnd(22, 70);
+		set time <- 1;
 		set grow_Time_INT <- rnd(0, time_Harvest_INT_mono);
 		set grow_Time_IE <- rnd(0, time_Harvest_IE);
 		set grow_Time_IMS <- rnd(0, time_Harvest_IMS);
+		set cycle_INT <- rnd(0, max_cycle_INT_mono);
+		set cycle_INT <- rnd(0, max_cycle_INT_vana);		
+		set cycle_IE <- rnd(0, max_cycle_IE);
+		set cycle_IMS <- rnd(0, max_cycle_IMS);				
 		set max_Loan <- rnd(25.0, 50.0);
-		set bank_Account <- rnd((-2 * max_Loan), (2 * max_Loan));
+		set bank_Account <- rnd((-1 * max_Loan), (avg_income));
+		
 	}
 
 	reflex grow_Shrimp
@@ -66,6 +75,14 @@ species farm
 		set income_from_IE <- 0.0;
 		set income_from_IMS <- 0.0;
 		set second_income <- 0.0;
+		
+		if time = 12{
+			set cycle_INT <- 0;
+			set cycle_IE <- 0;
+			set cycle_IMS <- 0;
+			set time <- 0;
+		}
+		
 
 		//reset crop costs
 		set crop_cost <- 0.0;
@@ -78,6 +95,7 @@ species farm
 		do update_loan_and_bank;
 
 		//update timers
+		set time <- time + 1;
 		set grow_Time_INT <- grow_Time_INT + 1;
 		set grow_Time_IE <- grow_Time_IE + 1;
 		set grow_Time_IMS <- grow_Time_IMS + 1;
@@ -177,27 +195,23 @@ species farm
 	//INT
 		if farmPlot.area_INT > 0 and disease_INT
 		{
-			set disease_INT <- true;
-			if (farmPlot.shrimp_Type = 1)
-			{
-				if grow_Time_INT >= time_Harvest_fail_INT_mono
-				{
-					set farmPlot.yield_INT_mono <- farmPlot.yield_INT_mono + (crop_yield_fail_INT_mono * farmPlot.area_INT);
-					set income_from_INT_mono <- income_from_INT_mono + farmPlot.yield_INT_mono * shrimp_price_INT_mono;
+			if (farmPlot.shrimp_Type = 1){
+				if grow_Time_INT >= time_Harvest_fail_INT_mono and cycle_INT < max_cycle_INT_mono{
+					set farmPlot.yield_INT_mono <- crop_yield_fail_INT_mono * farmPlot.area_INT;
+					set income_from_INT_mono <-  farmPlot.yield_INT_mono * shrimp_price_INT_mono;
+					set cycle_INT <- cycle_INT + 1;
 					set grow_Time_INT <- 0;
 				}
 
-			} else if (farmPlot.shrimp_Type = 2)
-			{
-				if grow_Time_INT >= time_Harvest_fail_INT_vana
-				{
-					set farmPlot.yield_INT_vana <- farmPlot.yield_INT_vana + (crop_yield_fail_INT_vana * farmPlot.area_INT);
-					income_from_INT_vana <- income_from_INT_vana + farmPlot.yield_INT_vana * shrimp_price_INT_vana;
+			} else if (farmPlot.shrimp_Type = 2){
+				if grow_Time_INT >= time_Harvest_fail_INT_vana and cycle_INT < max_cycle_INT_vana{
+					set farmPlot.yield_INT_vana <- crop_yield_fail_INT_vana * farmPlot.area_INT;
+					income_from_INT_vana <- farmPlot.yield_INT_vana * shrimp_price_INT_vana;
+					set cycle_INT <- cycle_INT + 1;
 					set grow_Time_INT <- 0;
 				}
 
-			} else
-			{
+			} else{
 				set farmPlot.yield_INT_mono <- 0.0;
 				set farmPlot.yield_INT_vana <- 0.0;
 				set grow_Time_INT <- 0;
@@ -208,29 +222,25 @@ species farm
 		//IE
 		if farmPlot.area_IE > 0 and disease_IE
 		{
-			if grow_Time >= time_Harvest_fail_IE
-			{
-				set farmPlot.yield_IE <- farmPlot.yield_IE + (crop_yield_fail_IE * farmPlot.area_IE);
-				set income_from_IE <- income_from_IE + farmPlot.yield_IE * shrimp_price_IE;
+			if grow_Time_IE >= time_Harvest_fail_IE and cycle_IE < max_cycle_IE{
+				set farmPlot.yield_IE <- crop_yield_fail_IE * farmPlot.area_IE;
+				set income_from_IE <- farmPlot.yield_IE * shrimp_price_IE;
 				set grow_Time_IE <- 0;
-			} else
-			{
-				set farmPlot.yield_IE <- 0.0;
+				set cycle_IE <- cycle_IE + 1;
+			} else{
+				set farmPlot.yield_IE <- 0.0;	
 				set grow_Time_IE <- 0;
 			}
 
 		}
 
 		//IMS
-		if farmPlot.area_IMS > 0 and disease_IMS
-		{
-			if grow_Time >= time_Harvest_fail_IMS
-			{
+		if farmPlot.area_IMS > 0 and disease_IMS{
+			if grow_Time_IMS >= time_Harvest_fail_IMS{
 				set grow_Time_IMS <- 0;
-				set farmPlot.yield_IMS <- farmPlot.yield_IMS + (crop_yield_fail_IMS * farmPlot.area_IMS);
-				set income_from_IMS <- income_from_IMS + farmPlot.yield_INT_mono * shrimp_price_IMS;
-			} else
-			{
+				set farmPlot.yield_IMS <- crop_yield_fail_IMS * farmPlot.area_IMS;
+				set income_from_IMS <-  farmPlot.yield_INT_mono * shrimp_price_IMS;
+			} else{
 				set grow_Time_IMS <- 0;
 				set farmPlot.yield_IMS <- 0.0;
 			}
@@ -240,35 +250,36 @@ species farm
 		//in case of regular harvest
 
 		//INT
-		if farmPlot.area_INT > 0
-		{
-			if (farmPlot.shrimp_Type = 1) and (grow_Time_INT >= time_Harvest_INT_mono)
-			{
-
-			//write "...harvesting from intensiver monodon";
-				set farmPlot.yield_INT_mono <- farmPlot.yield_INT_mono + (crop_yield_INT_mono * farmPlot.area_INT);
-				set income_from_INT_mono <- income_from_INT_mono + farmPlot.yield_INT_mono * shrimp_price_INT_mono;
-				set grow_Time_INT <- 0;
+		if farmPlot.area_INT > 0{
+			if (farmPlot.shrimp_Type = 1){			
+				if (grow_Time_INT >= time_Harvest_INT_mono) and (cycle_INT < max_cycle_INT_mono){
+					//write "...harvesting from intensiver monodon";
+					set farmPlot.yield_INT_mono <- crop_yield_INT_mono * farmPlot.area_INT;
+					set income_from_INT_mono <- farmPlot.yield_INT_mono * shrimp_price_INT_mono;
+					set cycle_INT <- cycle_INT + 1;
+					set grow_Time_INT <- 0;
+				}
 			}
-
-			if (farmPlot.shrimp_Type = 2) and (grow_Time_INT >= time_Harvest_INT_vana)
-			{
-
-			//write "...harvesting from intensive vanamei";					
-				set farmPlot.yield_INT_vana <- farmPlot.yield_INT_vana + (crop_yield_INT_vana * farmPlot.area_INT);
-				set income_from_INT_vana <- income_from_INT_vana + farmPlot.yield_INT_vana * shrimp_price_INT_vana;
-				set grow_Time_INT <- 0;
-			}  
+			
+			if (farmPlot.shrimp_Type = 2){				
+				if (grow_Time_INT >= time_Harvest_INT_vana) and (cycle_INT < max_cycle_INT_vana){
+					//write "...harvesting from intensive vanamei";					
+					set farmPlot.yield_INT_vana <- crop_yield_INT_vana * farmPlot.area_INT;
+					set income_from_INT_vana <- farmPlot.yield_INT_vana * shrimp_price_INT_vana;
+					set cycle_INT <- cycle_INT + 1;
+					set grow_Time_INT <- 0;
+				}  
+			}
 		}
-
+		
+		
 		//IE
-		if farmPlot.area_IE > 0
-		{
-			if grow_Time_IE >= time_Harvest_IE
-			{
-			//write "...harvesting from improved extensive monodon";				
-				set farmPlot.yield_IE <- farmPlot.yield_IE + (crop_yield_IE * farmPlot.area_IE);
-				set income_from_IE <- income_from_IE + farmPlot.yield_IE * shrimp_price_IE;
+		if farmPlot.area_IE > 0	{
+			if grow_Time_IE >= time_Harvest_IE and (cycle_IE < max_cycle_IE){
+				//write "...harvesting from improved extensive";				
+				set farmPlot.yield_IE <- crop_yield_IE * farmPlot.area_IE;
+				set income_from_IE <- farmPlot.yield_IE * shrimp_price_IE;
+				set cycle_INT <- cycle_IE + 1;
 				set grow_Time_IE <- 0;
 			}
 
@@ -281,8 +292,12 @@ species farm
 			{
 			//write "...harvesting from integrated monodon";				
 				set grow_Time_IMS <- 0;
-				set farmPlot.yield_IMS <- farmPlot.yield_IMS + (crop_yield_IMS * farmPlot.area_IMS);
-				set income_from_IMS <- income_from_IMS + farmPlot.yield_IMS * shrimp_price_IMS;
+				set farmPlot.yield_IMS <- crop_yield_IMS * farmPlot.area_IMS;
+				set income_from_IMS <- farmPlot.yield_IMS * shrimp_price_IMS;
+				set cycle_IMS <- cycle_IMS + 1;
+				set grow_Time_IMS <- 0;
+				
+				
 			}
 
 		}
@@ -292,21 +307,8 @@ species farm
 		//we need to seed new shrimp for the systems that were harvested
 		do seed_new_shrimp;
 	}
-//===	
-	bool diseaseINT{
-		write "flipper";
-		return flip(farmPlotFailureRate_INT);
-	}
-	
-	bool diseaseIE{
-		return flip(farmPlotFailureRate_IE);
-	}
-	
-	bool diseaseIMS{
-		return flip(farmPlotFailureRate_IMS);
-		
-	}
 
+// ===
 	action check_for_disease
 	{
 	//TODO: need to check probabilities in globals. Currently extreme high!	
@@ -336,7 +338,8 @@ species farm
 	//this saves us a lot of hassle
 
 	//recalculate balance based on costs and income
-		set bank_Account <- bank_Account - crop_cost + second_Income + income_from_INT_mono + income_from_INT_vana + income_from_IE + income_from_IMS;
+		let hhcost <- hh_Size * HH_expenses_avg;
+		set bank_Account <- bank_Account - hhcost - crop_cost + second_Income + income_from_INT_mono + income_from_INT_vana + income_from_IE + income_from_IMS;
 	}
 
 	action seed_new_shrimp
@@ -349,10 +352,10 @@ species farm
 		{
 			if farmPlot.shrimp_Type = 1
 			{
-				set crop_cost <- crop_cost + shrimp_init_INT_mono;
+				set crop_cost <- crop_cost;
 			} else
 			{
-				set crop_cost <- crop_cost + shrimp_init_INT_vana;
+				set crop_cost <- crop_cost;
 			}
 
 		}
@@ -360,13 +363,13 @@ species farm
 		//IE
 		if (grow_Time_IE = 0) and (farmPlot.area_IE > 0)
 		{
-			set crop_cost <- crop_cost + shrimp_init_IE;
+			set crop_cost <- crop_cost;
 		}
 
 		//IMS
 		if (grow_Time_IMS = 0) and (farmPlot.area_IMS > 0)
 		{
-			set crop_cost <- crop_cost + shrimp_init_IMS;
+			set crop_cost <- crop_cost;
 		}
 
 	}

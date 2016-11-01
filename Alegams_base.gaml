@@ -32,7 +32,10 @@ global{
 		[
 		plot_Id::int(read("OBJECTID")),
 		tot_Area::(float(read("Shape_Area")))/10000,
-		LU_model::int(read("LU_model"))
+		LU_model::int(read("LU_model")),
+		LU_local::int(read("LU_local")),
+		LU_office::string(read("LU_Office")),
+		LU_cad::string(read("LU_Cad1"))
 			
 		]{		}
 
@@ -80,9 +83,14 @@ experiment alegams type: gui {
 		display bank_Account {
 			chart "Average saldo " type: series background: rgb ('white') size: {1,0.5} position: {0,0}{
 		 	data "AVG Saldo" value: avg_BankAccount color: rgb ('red');
+		 	data "std +" value: std_up_BankAccount color: rgb ('green');
+		 	data "std -" value: std_down_BankAccount color: rgb ('green');		 	
 			}
 		}
-		monitor "Average saldo" value: avg_BankAccount refresh:every(1);	
+		monitor "Average saldo" value: avg_BankAccount refresh:every(1);
+		monitor "STD dev saldo" value: std_BankAccount refresh:every(1);			
+		monitor "Max saldo" value: max_BankAccount refresh:every(1);
+		monitor "Min dev saldo" value: min_BankAccount refresh:every(1);		
 		monitor "Total Area INT" value: tot_INT refresh:every(1);
 		monitor "Total Area IE" value: tot_IE refresh:every(1);
 		monitor "Total Area IMS" value: tot_IMS refresh:every(1);

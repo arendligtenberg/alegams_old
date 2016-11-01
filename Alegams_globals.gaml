@@ -26,7 +26,12 @@ model Alegamsglobals
  	float Prob_INT_IMS <- 0.3;
  	float Prob_IE_IMS <- 0.1;
  	
-
+ 	//max number of Cycles:
+ 	int max_cycle_INT_mono <- 2;
+ 	int max_cycle_INT_vana <- 3;
+	int max_cycle_IE <- 3;
+	int max_cycle_IMS <- 999;
+	
  	//Times to harvest
  	int time_Harvest_INT_mono <- 4 parameter: "time to harvest intensive Monodon (months)" category: "Crop" ;
 	int time_Harvest_INT_vana <- 3 parameter: "time to harvest intensive Vannamei (months)" category: "Crop" ;
@@ -45,8 +50,8 @@ model Alegamsglobals
  	//float farmPlotFailureRate_INT <- 0.56.;
  	//float farmPlotFailureRate_IMS <- 0.47.;
 
- 	float farmPlotFailureRate_INT <- 0.43 parameter: "chance of disease for intensive" category: "Crop" ; //0.4;
- 	float farmPlotFailureRate_IE <- 0.29 parameter: "chance of disease for improved extensive" category: "Crop" ; //0.3;
+ 	float farmPlotFailureRate_INT <- 0.2 parameter: "chance of disease for intensive" category: "Crop" ; //0.2;
+ 	float farmPlotFailureRate_IE <- 0.12 parameter: "chance of disease for improved extensive" category: "Crop" ; //0.12;
  	float farmPlotFailureRate_IMS <- 0.1 parameter: "chance of disease for integrated mangrove" category: "Crop" ; //0.1;
 
  	
@@ -74,6 +79,8 @@ model Alegamsglobals
  
  
 	//household related
+	
+	float avg_income <- 150.0;
 
 	// houshold expenses (Mvdn/person/month	
 	//float HH_expense_INT_mono <- 2.1;
@@ -91,9 +98,9 @@ model Alegamsglobals
 	//float HH_loan_std_IMS <- 30.00;
 	
  	//basic pond size
- 	float min_INT_size <- 0.4 parameter: "min size of intensive ponds (ha.)" category: "Farm" ;
-	float max_INT_size <- 1.4 parameter: "max size of intensive ponds (ha.)" category: "Farm" ; 	
- 	float min_IE_size <- 0.7 parameter: "min size of improved extensive ponds)" category: "Farm" ;
+ 	float min_INT_size <- 0.1 parameter: "min size of intensive ponds (ha.)" category: "Farm" ;
+	float max_INT_size <- 1.5 parameter: "max size of intensive ponds (ha.)" category: "Farm" ; 	
+ 	float min_IE_size <- 0.5 parameter: "min size of improved extensive ponds)" category: "Farm" ;
     float max_IE_size <- 2.0 parameter: "max size of improved extensive ponds)" category: "Farm"; 
 	
 	float HH_2ndincome_avg_INT_mono <-229.00/12 parameter: "average sec. income intensive Monodon(mVnd/month)" category: "Farm" ;

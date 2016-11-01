@@ -17,6 +17,9 @@ species plot
 	float area_IE;
 	float area_IMS;
 	float tot_Area;
+	string LU_office;
+	string LU_cad;
+	int LU_local;
 	int LU_model;	
 	int production_System update: self color_plots [];
 	rgb color <- # gray;
@@ -39,18 +42,26 @@ species plot
 	action determine_area_production_system{
 		switch LU_model{
 			match 1{
-				set area_INT <- rnd(min_INT_size,max_INT_size);
-				if area_INT > tot_Area{
-					area_INT <- tot_Area;
-				}	
-				set shrimp_Type <- rnd(1, 2);
+				if tot_Area < 3 {
+					set area_INT <- rnd(min_INT_size,max_INT_size);
+				}
+				else{
+					area_INT <- tot_Area * 0.7;
+				}
+				if flip(0.5){
+					set shrimp_Type <- 1;
+				}else{
+					set shrimp_Type <- 2;
+				}
 				set production_System <- INT;
 				
 			}
 			match 2{
-				set area_IE <- rnd(min_IE_size,max_IE_size);
-				if area_IE > tot_Area{
-					area_IE <- tot_Area;
+				if tot_Area < 3 {
+					set area_IE <- rnd(min_IE_size,max_IE_size);
+				}
+				else{
+					area_IE <- tot_Area * 0.7;
 				}
 				set production_System <- IE;
 				
@@ -63,8 +74,12 @@ species plot
 			match 4 {
 				set area_INT <- rnd(min_INT_size,max_INT_size);
 				set area_IE <- rnd(min_IE_size,max_IE_size);
-				if (area_INT + area_IE) > tot_Area{
-					let d_area <- ((area_INT + area_IE) - tot_Area)/2;
+				if area_INT > area_IE{
+					set area_INT <- area_IE;
+				}
+				
+				if (area_INT + area_IE) > tot_Area * 0.7{
+					let d_area <- (area_INT + area_IE) - ((tot_Area * 0.7)/2);
 					set area_INT <-  area_INT - d_area;
 					set area_IE <- area_IE - d_area;
 				}
@@ -73,7 +88,10 @@ species plot
 			}
 			match 5 {
 				set area_INT <- rnd(min_INT_size,max_INT_size);
-				if (area_INT * 2) < tot_Area{
+				if area_INT > 1 {
+					area_INT <- 1.0;
+				}
+				if (area_INT) < tot_Area * 0.5 {
 					set area_IMS <- tot_Area - area_INT;
 				}else{
 					set area_INT <- tot_Area/2;
@@ -87,7 +105,7 @@ species plot
 				if (area_IE * 2) < tot_Area{
 					set area_IE <- tot_Area - area_IE;
 				}else{
-					set area_IE <- tot_Area/2;
+					set area_IE <- tot_Area * 0.5;
 					set area_IE <- tot_Area - area_IE;
 				}
 				set production_System <- IE_IMS;
