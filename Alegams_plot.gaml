@@ -153,9 +153,71 @@ species plot
 			
 						
 		}
-			set production_System <- LU_model;		
+			set production_System <- LU_model;	
+			
+			}	
 
-	
+	//this action determines the name of the production system 
+	action determine_prod_system
+	{
+		int INT_true <- 0;
+		int IE_true <- 0;
+		int IMS_true <- 0;
+		int type_string <- 0;
+		if area_INT > 0
+		{
+			set INT_true <- 1;
+		}
+
+		if area_IE > 0
+		{
+			set IE_true <- 10;
+		}
+
+		if area_IMS > 0
+		{
+			set IMS_true <- 100;
+		}
+
+		type_string <- INT_true + IE_true + IMS_true;
+		switch type_string
+		{
+			match 1
+			{
+				set production_System <- INT;
+			}
+
+			match 10
+			{
+				set production_System <- IE;
+			}
+
+			match 100
+			{
+				set production_System <- IMS;
+			}
+
+			match 11
+			{
+				set production_System <- INT_IE;
+			}
+
+			match 101
+			{
+				set production_System <- INT_IMS;
+			}
+
+			match 110
+			{
+				set production_System <- IE_IMS;
+			}
+
+			default
+			{
+				set production_System <- unKnown;
+			}
+
+		}
 
 
 	} //end determine_prod_system
