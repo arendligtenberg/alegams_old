@@ -57,7 +57,7 @@ global{
 	}//end init
 	
 	reflex output_Statistics{
-		do calculate_averag_bankaccount;
+		do calculate_averag_HH_account;
 		do calculate_tot_areas;
 		
 	}
@@ -80,20 +80,21 @@ experiment alegams type: gui {
 			species farm aspect: default;
 		}
 	
-		display bank_Account {
+		display HH_Account {
 			chart "Average saldo " type: series background: rgb ('white') size: {1,0.5} position: {0,0}{
-		 	data "AVG Saldo" value: avg_BankAccount color: rgb ('red');
-		 	data "std +" value: std_up_BankAccount color: rgb ('green');
-		 	data "std -" value: std_down_BankAccount color: rgb ('green');		 	
+		 	data "AVG Saldo" value: avg_HH_Account color: rgb ('red');
+		 	data "std +" value: std_up_HH_Account color: rgb ('green');
+		 	data "std -" value: std_down_HH_Account color: rgb ('green');		 	
 			}
 		}
-		monitor "Average saldo" value: avg_BankAccount refresh:every(1);
-		monitor "STD dev saldo" value: std_BankAccount refresh:every(1);			
-		monitor "Max saldo" value: max_BankAccount refresh:every(1);
-		monitor "Min dev saldo" value: min_BankAccount refresh:every(1);		
+		monitor "Average saldo" value: avg_HH_Account refresh:every(1);
+		monitor "STD dev saldo" value: std_HH_Account refresh:every(1);			
+		monitor "Max saldo" value: max_HH_Account refresh:every(1);
+		monitor "Min dev saldo" value: min_HH_Account refresh:every(1);		
 		monitor "Total Area INT" value: tot_INT refresh:every(1);
 		monitor "Total Area IE" value: tot_IE refresh:every(1);
 		monitor "Total Area IMS" value: tot_IMS refresh:every(1);
+		
 		
 	}
 }	
