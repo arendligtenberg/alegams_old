@@ -60,7 +60,20 @@ model Alegams_globals
  	float farmPlotFailureRate_INT <- 0.6 parameter: "chance of disease for intensive" category: "Crop" ; //0.2;
  	float farmPlotFailureRate_IE <- 0.6 parameter: "chance of disease for improved extensive" category: "Crop" ; //0.12;
  	float farmPlotFailureRate_IMS <- 0.3 parameter: "chance of disease for integrated mangrove" category: "Crop" ; //0.1;
-
+	
+	//reducing condition for each system
+	int fail_time_to_reduce_INT <-2;
+	int fail_time_to_reduce_IE <-3;
+	
+	//probability to shift
+	
+	float Prob_shift_IE_INT <- 0.05;
+ 	float Prob_shift_IMS_IE <- 0.05;
+ 	float Prob_shift_IMS_INT <- 0.01;
+ 	float Prob_shift_INT_IE <- 0.01;
+ 	float Prob_shift_INT_IMS <- 0.03;
+ 	float Prob_shift_IE_IMS <- 0.01;
+	
 	//crop yields  (kg/ha/cycle) 
 	int crop_yield_INT_mono <- 5814 parameter: "crop yields intensive Monodon (kg/ha/cycle)" category: "Crop" ;
 	int crop_yield_INT_vana <- 8897	parameter: "crop yields intensive Vannamei (kg/ha/cycle)" category: "Crop" ;	
@@ -209,9 +222,7 @@ model Alegams_globals
 	
 	
 
-	//reducing condition for each system
-	int fail_time_to_reduce_INT <-2;
-	int fail_time_to_reduce_IE <-3;
+
 	
  	file plot_file <- file ('../includes/LongVinhProvinceCorrectFinal2.shp');
  	}

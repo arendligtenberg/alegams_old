@@ -49,7 +49,7 @@ species farm
 	bool shift_IE_INT;
 	bool shift_IMS_INT;
 	bool shift_IMS_IE;
-	bool abandon;
+	bool abandon_INT;
 	float crop_cost;
 	float income_from_INT_mono;
 	float income_from_INT_vana;
@@ -68,15 +68,15 @@ species farm
 		cycle_INT <- rnd(0, max_cycle_INT_mono);
 		cycle_INT <- rnd(0, max_cycle_INT_vana);		
 		cycle_IE <- rnd(0, max_cycle_IE);
-		cycle_IMS <- rnd(0, max_cycle_IMS);				
+		cycle_IMS <- rnd (0, max_cycle_IMS);				
 		bank_Loan <- rnd(50.0, 100.0);
 		HH_Account <- rnd((-1 * bank_Loan), (avg_income));
 		farmPlot.Neighbour <- int((plot) at_distance 100);// when: farmPlot.area_INT > 0;
 		grow_Time_IMS<-0; //month
-	INT_fail_time<-0;
-	IE_fail_time<-0;
-INT_sucess_time<-0;
-	IE_sucess_time<-0;
+		INT_fail_time<-0;
+		IE_fail_time<-0;
+		INT_sucess_time<-0;
+		IE_sucess_time<-0;
 	}
 
 	reflex grow_Shrimp
@@ -99,16 +99,21 @@ INT_sucess_time<-0;
 		income_from_IMS <- 0.0;
 		second_income <- 0.0;
 		
+	 //month
+		INT_fail_time <- INT_fail_time;
+		IE_fail_time<- IE_fail_time;
+		INT_sucess_time<-INT_sucess_time;
+		IE_sucess_time<-IE_sucess_time;
 		if time = 12{
 			time <- 0;
 			cycle_INT <- 0;
 			cycle_IE <- 0;
 			cycle_IMS <- 0;
 			
-//			INT_fail_time <-0;
-//			IE_fail_time <-0;
-//			INT_sucess_time <-0;
-//			IE_sucess_time <-0;
+			INT_fail_time <-0;
+			IE_fail_time <-0;
+			INT_sucess_time <-0;
+			IE_sucess_time <-0;
 		}
 		
 		
@@ -124,6 +129,8 @@ INT_sucess_time<-0;
 		do reduce_crop;
 		do calc_ability_to_shift;
 		do update_loan_and_bank;
+		do shifting;
+		do abandon;
 		
 		
 
@@ -449,7 +456,7 @@ INT_sucess_time<-0;
 			if (INT_fail_time >= fail_time_to_reduce_INT) 
 			and (INT_sucess_time = 0) 
 			and (HH_Account < Cost_1st_month_INT_mono*farmPlot.area_INT) 
-			and farmPlot.area_IMS =0.0
+			and farmPlot.area_IMS = 0.0
 			{
 				if flip(0.9){  // 0.9 will be replaced by a parameter
 					reduce_INT <- true;	
@@ -459,9 +466,12 @@ INT_sucess_time<-0;
 				reduce_INT <- false;
 				}
 			//reduce IE
-			if (IE_fail_time >= fail_time_to_reduce_IE) and (IE_sucess_time = 0) and (HH_Account < Cost_1st_month_IE*farmPlot.area_IE) and farmPlot.area_IMS >0.0
+			if (IE_fail_time >= fail_time_to_reduce_IE)
+			and (IE_sucess_time = 0)
+			and (HH_Account < Cost_1st_month_IE*farmPlot.area_IE)
+			and farmPlot.area_IMS > 0.0
 			{
-				if flip(0.9){
+				if flip(0.9){ 
 					reduce_IE <- true;
 				}
 				
@@ -497,32 +507,36 @@ INT_sucess_time<-0;
 	action calc_ability_to_shift
 	{
 	//shifting of INT
-		if INT_fail_time>=3 
+		if farmPlot.area_INT >0
+		and INT_fail_time>=3 
 		and INT_sucess_time=0 
 		and (HH_Account > Cost_1st_month_INT_mono*farmPlot.area_INT)
+		and reduce_IE = false
+		and reduce_INT = false
+		
 		{
 			if farmPlot.area_IMS >0
 			{
-				if farmPlot.area_INT >0.5
+				if farmPlot.area_INT > 0.5
 				{
-					if flip(0.9){
+					if flip(Prob_shift_INT_IMS){
 						shift_INT_IMS <- true;	
 					}
 				}else{
 					if flip(0.9){
-						abandon <- true;
+						abandon_INT <- true;
 						}
 				}
 			}else{
 				if farmPlot.area_INT > 0.5
 				{
-					if flip(0.9){
+					if flip(Prob_shift_INT_IE){
 						shift_INT_IE <- true;
 						}
 					
 				}else{
 					if flip(0.9){
-						abandon <- true;
+						abandon_INT <- true;
 						}
 				}
 			}
@@ -531,15 +545,19 @@ INT_sucess_time<-0;
 		}
 	
 	//shifting of IE	
-		if farmPlot.area_INT >0
+		if farmPlot.area_IE >0
 		{
 			 //INT_Neibour_sucess and
 			if IE_sucess_time >3 
-			and farmPlot.Neighbour>50
+			and farmPlot.Neighbour>10
 			and HH_Account> invest_cost_INT_mono + Cost_1st_month_INT_mono
-			and farmPlot.Neighbour > 10
+			and reduce_IE = false
+			and reduce_INT = false
 			{
-				shift_IE_INT <-true;//add probability for shiftinh ratio in farm plot scale
+				if flip(Prob_shift_IE_INT)
+				{
+					shift_IE_INT <-true;//add probability for shiftinh ratio in farm plot scale
+				}
 			}else{
 				if IE_fail_time >3 and farmPlot.area_IMS > 0
 				{
@@ -555,9 +573,12 @@ INT_sucess_time<-0;
 	//shifting of IMS	
 		if HH_Account > invest_cost_INT_mono and //neibour sucess
 			farmPlot.area_IMS > 0
-		and farmPlot.LU_office != "Protection forest"
+		//and farmPlot.LU_office != "Protection  forest"
 		{
-			shift_IMS_INT <- true;
+			if flip(Prob_shift_IMS_INT)
+			{
+				shift_IMS_INT <- true;
+			}
 		}else{
 				//nochange
 		}
@@ -570,7 +591,7 @@ INT_sucess_time<-0;
 		{
 			farmPlot.area_IE <- farmPlot.area_IE +farmPlot.area_INT;
 			farmPlot.area_INT <- 0.0;
-			farmPlot.area_IMS <- farmPlot.area_IMS;
+			shift_INT_IE <- false;
 		}
 			
 		
@@ -578,27 +599,54 @@ INT_sucess_time<-0;
 		{
 			farmPlot.area_IMS <- farmPlot.area_IMS + farmPlot.area_INT;
 			farmPlot.area_INT <- 0.0;
-			farmPlot.area_IE <- farmPlot.area_IE;
+			shift_INT_IMS <- false;
+//			if farmPlot.area_IE + farmPlot.area_INT + farmPlot.area_IMS> farmPlot.tot_Area
+//			{
+//				farmPlot.area_IMS<-farmPlot.area_IMS;
+//				farmPlot.area_INT<-farmPlot.area_INT;
+//				farmPlot.area_IE <-farmPlot.area_IE;
+//			}
 		}
 		if shift_IE_IMS =true
 		{
 			farmPlot.area_IMS <- farmPlot.area_IMS +farmPlot.area_IE;
 			farmPlot.area_IE <- 0.0;
+			shift_IE_IMS <- false;
+			
 		}
 		if shift_IE_INT = true
 		{
-			farmPlot.area_INT <- farmPlot.area_INT + shift_INT_size;
-			farmPlot.area_IE <- farmPlot.area_IE - shift_INT_size;
+			if (farmPlot.area_IE - shift_INT_size)> 0
+			{
+				farmPlot.area_INT <- farmPlot.area_INT + shift_INT_size;
+				farmPlot.area_IE <- farmPlot.area_IE - shift_INT_size;
+				shift_IE_INT <- false;
+			}else
+			{
+				//no change
+			}
+			
 		}
 		if shift_IMS_INT = true
 		{
-			farmPlot.area_INT <- farmPlot.area_INT + shift_INT_size;
-			farmPlot.area_IMS <- farmPlot.area_IMS - shift_INT_size;
+			if (farmPlot.area_IMS - shift_INT_size)>0
+			{
+				farmPlot.area_INT <- farmPlot.area_INT + shift_INT_size;
+				farmPlot.area_IMS <- farmPlot.area_IMS - shift_INT_size;
+				shift_IMS_INT <- false;
+				
+			}
 		}
 		if shift_IMS_IE = true
 		{
-			farmPlot.area_IMS <- farmPlot.area_IMS + shift_IE_size;
-			farmPlot.area_IE <- farmPlot.area_IE - shift_IE_size;
+			if (farmPlot.area_IMS - shift_IE_size)>0
+			{
+				farmPlot.area_IE <- farmPlot.area_IE + shift_IE_size;
+				farmPlot.area_IMS <- farmPlot.area_IMS - shift_INT_size;
+				shift_IMS_IE <- false;
+				
+			}
+
 		}
 
 	}//end of action shifting to another systems
@@ -637,7 +685,14 @@ INT_sucess_time<-0;
 //			set crop_cost <- crop_cost;
 //		}
 //	}
-
+	action abandon
+	{
+		if abandon_INT =true
+		{
+			farmPlot.area_INT <-0.0;
+			crop_cost <- 0.0;
+		}
+	}
 
 	aspect default
 	{

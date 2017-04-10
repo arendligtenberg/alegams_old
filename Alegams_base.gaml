@@ -83,8 +83,12 @@ experiment alegams type: gui {
 		display HH_Account {
 			chart "Average saldo " type: series background: rgb ('white') size: {1,0.5} position: {0,0}{
 		 	data "AVG Saldo" value: avg_HH_Account color: rgb ('red');
-		 	data "std +" value: std_up_HH_Account color: rgb ('green');
-		 	data "std -" value: std_down_HH_Account color: rgb ('green');		 	
+		 	data "Total Area INT" value: tot_INT color: rgb (128, 0, 255,255);
+		 	data "Total Area IE" value: tot_IE color: rgb (255, 128, 128,255);
+		 	data "Total Area IMS" value: tot_IMS color: #green;
+		 	
+		 	//data "std +" value: std_up_HH_Account color: rgb ('green');
+		 	//data "std -" value: std_down_HH_Account color: rgb ('green');		 	
 			}
 		}
 		monitor "Average saldo" value: avg_HH_Account refresh:every(1);
